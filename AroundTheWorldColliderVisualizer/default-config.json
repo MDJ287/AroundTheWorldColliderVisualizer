@@ -1,4 +1,46 @@
 {
   "$schema": "https://raw.githubusercontent.com/ow-mods/owml/master/schemas/config_schema.json",
-  "enabled": true
+  "enabled": true,
+  "settings": {
+    "viewAroundTheWorld": {
+      "title": "Around The World triggers",
+      "type": "toggle",
+      "value": false
+    },
+    "viewTakeMeAlive": {
+      "title": "Take Me Alive triggers",
+      "type": "toggle",
+      "value": false
+    },
+    "viewTubular": {
+      "title": "Tubular trigger",
+      "type": "toggle",
+      "value": false
+    },
+    "viewAlphaPilot": {
+      "title": "Hotshot trigger",
+      "type": "toggle",
+      "value": false
+    },
+    "viewLoopExtension": {
+      "title": "TimeLoopExtensionTriggers",
+      "type": "toggle",
+      "value": false
+    },
+    "viewOxygenVolume": {
+      "title": "OxygenVolumes",
+      "type": "toggle",
+      "value": false
+    },
+    "viewEntrywayTrigger": {
+      "title": "EntrywayTriggers",
+      "type": "toggle",
+      "value": false
+    },
+    "viewShipLogFactTriggerVolume": {
+      "title": "ShipLogFactTriggerVolumes",
+      "type": "toggle",
+      "value": false
+    }
+  }
 }
