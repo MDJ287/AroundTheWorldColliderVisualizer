@@ -271,6 +271,15 @@ namespace AroundTheWorldColliderVisualizer
                         float sphereRadius = ShapeUtil.Sphere.CalcWorldSpaceRadius(sphereShape);
                         DrawWireframeSphere(sphereRadius, sphereCenter, sphereShape.transform.forward, sphereShape.transform.up, cols[i], 12);
                     }
+                    else if (shapes[i].GetType() == typeof(CylinderShape))
+                    {
+                        CylinderShape cylinderShape = (CylinderShape)shapes[i];
+                        float cylinderRadius;
+                        Vector3 cylinderStart;
+                        Vector3 cylinderEnd;
+                        ShapeUtil.Cylinder.CalcWorldSpaceEndpoints(cylinderShape, out cylinderRadius, out cylinderStart, out cylinderEnd);
+                        DrawWireframeCone(cylinderRadius, cylinderRadius, cylinderStart, cylinderEnd, cols[i], 12);
+                    }
                 }
             }
         }
@@ -573,7 +582,7 @@ namespace AroundTheWorldColliderVisualizer
             }
         }
 
-        public static void DrawWireframeCircle(float radius, Vector3 normal, Vector3 up, Vector3 offset, Color color, int resolution = 3, float startAngle = 0f, float endAngle = 6.2831855f, bool isWholeCircle = true)
+        private static void DrawWireframeCircle(float radius, Vector3 normal, Vector3 up, Vector3 offset, Color color, int resolution = 3, float startAngle = 0f, float endAngle = 6.2831855f, bool isWholeCircle = true)
         {
             bool flag = resolution < 3 || radius <= 0f;
             if (!flag)
@@ -592,6 +601,47 @@ namespace AroundTheWorldColliderVisualizer
                 }
                 GL.End();
             }
+        }
+
+        private static void DrawWireframeCircleWithCrossbeams(float radius, Vector3 normal, Vector3 up, Vector3 offset, Color color, int resolution = 3, float startAngle = 0f, float endAngle = 6.2831855f, bool isWholeCircle = true)
+        {
+            DrawWireframeCircle(radius, normal, up, offset, color, resolution, startAngle, endAngle, isWholeCircle);
+            GL.Begin(GL.LINES);
+            GL.Color(color);
+            normal = normal.normalized;
+            up = up.normalized;
+            for (int i = 0; i < 12; i++)
+            {
+                Vector3 sideways = Vector3.Cross(normal, up);
+
+                Vector3 radiusVector = GetRotatedVectorComponent(sideways, up, 1/3f * (float)i + startAngle);
+                GL.Vertex(radiusVector * radius + offset);
+                GL.Vertex(-radiusVector * radius + offset);
+
+                up = Vector3.Slerp(up, sideways, 1/3f);
+            }
+            GL.End();
+        }
+
+        private static void DrawWireframeCone(float coneRadiusStart, float coneRadiusEnd, Vector3 coneStart, Vector3 coneEnd, Color color, int resolution = 3)
+        {
+            Vector3 direction = coneEnd - coneStart;
+            Vector3 randomFowardVector = GetArbitraryPerpendicularVector(direction);
+            DrawWireframeCircleWithCrossbeams(coneRadiusStart, direction, randomFowardVector, coneStart, color, resolution, 0f, 6.2831855f, true);
+            DrawWireframeCircleWithCrossbeams(coneRadiusEnd, direction, randomFowardVector, coneEnd, color, resolution, 0f, 6.2831855f, true);
+            GL.Begin(1);
+            float angleStep = 6.2831855f / (float)resolution;
+            Vector3 rotationVector = Vector3.Cross(direction.normalized, randomFowardVector);
+            for (int i = 0; i <= resolution; i++)
+            {
+                Vector3 radiusVector = GetRotatedVectorComponent(rotationVector, randomFowardVector, angleStep * (float)i);
+                Vector3 vertex = radiusVector * coneRadiusStart + coneStart;
+                Vector3 vertex2 = radiusVector * coneRadiusEnd + coneEnd;
+                GL.Color(color);
+                GL.Vertex(vertex);
+                GL.Vertex(vertex2);
+            }
+            GL.End();
         }
 
         private static Vector3 GetRotatedVectorComponent(Vector3 rotationVector, Vector3 perpendicularComponent, float angle)
