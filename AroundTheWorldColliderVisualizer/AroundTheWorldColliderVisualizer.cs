@@ -29,6 +29,9 @@ namespace AroundTheWorldColliderVisualizer
         private bool viewOxygenVolume = false;
         private bool viewEntrywayTrigger = false;
         private bool viewShipLogFactTriggerVolume = false;
+        private bool viewStrangerSectorTriggers = false;
+
+        private bool viewLaunchElevatorController = false;
 
         public void Awake()
         {
@@ -41,7 +44,7 @@ namespace AroundTheWorldColliderVisualizer
         public void Start()
         {
             // Starting here, you'll have access to OWML's mod helper.
-            ModHelper.Console.WriteLine($"My mod {nameof(AroundTheWorldColliderVisualizer)} is loaded!", MessageType.Success);
+            ModHelper.Console.WriteLine($"{nameof(AroundTheWorldColliderVisualizer)} loaded!", MessageType.Success);
 
             new Harmony("MDJ287.AroundTheWorldColliderVisualizer").PatchAll(Assembly.GetExecutingAssembly());
 
@@ -72,6 +75,9 @@ namespace AroundTheWorldColliderVisualizer
             viewOxygenVolume = config.GetSettingsValue<bool>("viewOxygenVolume");
             viewEntrywayTrigger = config.GetSettingsValue<bool>("viewEntrywayTrigger");
             viewShipLogFactTriggerVolume = config.GetSettingsValue<bool>("viewShipLogFactTriggerVolume");
+
+            viewLaunchElevatorController = config.GetSettingsValue<bool>("viewLaunchElevatorController");
+            viewStrangerSectorTriggers = config.GetSettingsValue<bool>("viewStrangerSectorTriggers");
 
             if (inSolarSystem) ReloadShapes();
         }
@@ -180,6 +186,47 @@ namespace AroundTheWorldColliderVisualizer
                     else
                     {
                         AddCollider(logTriggers[i].GetComponent<Collider>());
+                    }
+                }
+            }
+
+            // elevator return trigger
+
+            if (viewLaunchElevatorController)
+            {
+                LaunchElevatorController elevatorController = FindObjectOfType<LaunchElevatorController>();
+
+                if (elevatorController != null)
+                {
+                    ModHelper.Console.WriteLine($"Visualizing elevator controller {elevatorController.name}");
+                    AddCollider(elevatorController.GetComponent<Collider>());
+                }
+            }
+
+            // stranger sectors
+
+            if (viewStrangerSectorTriggers)
+            {
+                Sector[] sectors = FindObjectsOfType<Sector>();
+                Sector ringWorldSector = null;
+                for (int i=0; i<sectors.Length; i++)
+                {
+                    if (sectors[i].GetIDString() == "RingWorldInterior")
+                    {
+                        ringWorldSector = sectors[i];
+                    }
+                }
+                if (ringWorldSector == null)
+                {
+                    ModHelper.Console.WriteLine("Could not find ring world sector");
+                }
+                else
+                {
+                    EntrywayTrigger[] entrywayTriggers = ringWorldSector.GetTriggerVolume()._sharedEntryways;
+                    for (int i=0; i<entrywayTriggers.Length; i++)
+                    {
+                        ModHelper.Console.WriteLine($"Visualizing ring world sector trigger {entrywayTriggers[i].name}");
+                        AddShape(entrywayTriggers[i].GetComponent<Shape>());
                     }
                 }
             }

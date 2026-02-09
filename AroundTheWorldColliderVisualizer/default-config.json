@@ -2,6 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/ow-mods/owml/master/schemas/config_schema.json",
   "enabled": true,
   "settings": {
+    "Achievement Triggers": {
+      "type": "separator"
+    },
     "viewAroundTheWorld": {
       "title": "Around The World triggers",
       "type": "toggle",
@@ -18,9 +21,12 @@
       "value": false
     },
     "viewAlphaPilot": {
-      "title": "Hotshot trigger",
+      "title": "Hotshot trigger (broken)",
       "type": "toggle",
       "value": false
+    },
+    "Misc. Triggers": {
+      "type": "separator"
     },
     "viewLoopExtension": {
       "title": "TimeLoopExtensionTriggers",
@@ -39,6 +45,16 @@
     },
     "viewShipLogFactTriggerVolume": {
       "title": "ShipLogFactTriggerVolumes",
+      "type": "toggle",
+      "value": false
+    },
+    "viewLaunchElevatorController": {
+      "title": "LaunchElevatorController",
+      "type": "toggle",
+      "value": false
+    },
+    "viewStrangerSectorTriggers": {
+      "title": "Stranger sector triggers",
       "type": "toggle",
       "value": false
     }
