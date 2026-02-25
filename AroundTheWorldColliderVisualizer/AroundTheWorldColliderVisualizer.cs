@@ -4,6 +4,7 @@ using OWML.ModHelper;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TheOutsider.MonoBehaviours;
 
 namespace AroundTheWorldColliderVisualizer
 {
@@ -32,6 +33,7 @@ namespace AroundTheWorldColliderVisualizer
         private bool viewStrangerSectorTriggers = false;
 
         private bool viewLaunchElevatorController = false;
+        private bool viewOutsiderTriggers = false;
 
         public void Awake()
         {
@@ -78,6 +80,8 @@ namespace AroundTheWorldColliderVisualizer
 
             viewLaunchElevatorController = config.GetSettingsValue<bool>("viewLaunchElevatorController");
             viewStrangerSectorTriggers = config.GetSettingsValue<bool>("viewStrangerSectorTriggers");
+
+            viewOutsiderTriggers = config.GetSettingsValue<bool>("viewOutsiderTriggers");
 
             if (inSolarSystem) ReloadShapes();
         }
@@ -228,6 +232,23 @@ namespace AroundTheWorldColliderVisualizer
                         ModHelper.Console.WriteLine($"Visualizing ring world sector trigger {entrywayTriggers[i].name}");
                         AddShape(entrywayTriggers[i].GetComponent<Shape>());
                     }
+                }
+            }
+
+            // the outsider
+
+            if (viewOutsiderTriggers)
+            {
+                ShipExplodeDoorVolume volume = FindObjectOfType<ShipExplodeDoorVolume>();
+
+                if (volume == null)
+                {
+                    ModHelper.Console.WriteLine("Could not find ship explode door volume");
+                }
+                else
+                {
+                    ModHelper.Console.WriteLine($"Visualizing ship explode door volume {volume.name}");
+                    AddShape(volume.GetComponent<Shape>());
                 }
             }
         }

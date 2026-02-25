@@ -25,4 +25,9 @@
   <ItemGroup>
     <Content Include="AroundTheWorldColliderVisualizer.csproj.user" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="TheOutsider">
+      <HintPath>..\..\..\..\AppData\Roaming\OuterWildsModManager\OWML\Mods\SBtT.TheOutsider\TheOutsider.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

@@ -57,6 +57,14 @@
       "title": "Stranger sector triggers",
       "type": "toggle",
       "value": false
+    },
+    "MODS": {
+      "type": "separator"
+    },
+    "viewOutsiderTriggers": {
+      "title": "The Outsider triggers",
+      "type": "toggle",
+      "value": false
     }
   }
 }
