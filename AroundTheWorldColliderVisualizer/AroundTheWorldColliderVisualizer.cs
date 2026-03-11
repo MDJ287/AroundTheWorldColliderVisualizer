@@ -3,7 +3,6 @@ using OWML.Common;
 using OWML.ModHelper;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace AroundTheWorldColliderVisualizer
 {
@@ -33,6 +32,13 @@ namespace AroundTheWorldColliderVisualizer
 
         private bool viewLaunchElevatorController = false;
 
+        private bool viewQuantumSockets = false;
+
+        GameObject rockRoots;
+        GameObject rockSockets;
+        SocketedQuantumObject[] rocks;
+        QuantumSocket[] sockets;
+
         public void Awake()
         {
             Instance = this;
@@ -55,13 +61,9 @@ namespace AroundTheWorldColliderVisualizer
 
         public void OnCompleteSceneLoad(OWScene previousScene, OWScene newScene)
         {
-            if (newScene != OWScene.SolarSystem)
-            {
-                inSolarSystem = false;
-                return;
-            }
-            inSolarSystem = true;
-            ReloadShapes();
+            inSolarSystem = newScene == OWScene.SolarSystem || newScene == OWScene.EyeOfTheUniverse;
+
+            if (inSolarSystem) ReloadShapes();
         }
         
         public override void Configure(IModConfig config)
@@ -78,6 +80,7 @@ namespace AroundTheWorldColliderVisualizer
 
             viewLaunchElevatorController = config.GetSettingsValue<bool>("viewLaunchElevatorController");
             viewStrangerSectorTriggers = config.GetSettingsValue<bool>("viewStrangerSectorTriggers");
+            viewQuantumSockets = config.GetSettingsValue<bool>("viewQuantumSockets");
 
             if (inSolarSystem) ReloadShapes();
         }
@@ -230,6 +233,13 @@ namespace AroundTheWorldColliderVisualizer
                     }
                 }
             }
+
+            // reloading misc
+
+            rockRoots = GameObject.Find("QuantumRock_Roots");
+            rockSockets = GameObject.Find("QuantumRock_Sockets");
+            rocks = rockRoots.GetComponentsInChildren<SocketedQuantumObject>();
+            sockets = rockSockets.GetComponentsInChildren<QuantumSocket>();
         }
 
         private bool AddShape(Shape shape)
@@ -258,16 +268,12 @@ namespace AroundTheWorldColliderVisualizer
 
         public void OnRenderObject()
         {
-            if (shapesToDraw[0] == null && collidersToDraw[0] == null)
-            {
-                return;
-            }
-
             CreateLineMaterial();
             lineMaterial.SetPass(0);
 
             RenderShapes(shapesToDraw);
             RenderColliders(collidersToDraw);
+            RenderMisc();
         }
 
         private void RenderShapes(Shape[] shapes)
@@ -379,6 +385,40 @@ namespace AroundTheWorldColliderVisualizer
                         float sphereRadius = CalcWorldSpaceRadius(sphereShape);
                         DrawWireframeSphere(sphereRadius, sphereCenter, sphereShape.transform.forward, sphereShape.transform.up, cols[i], 12);
                     }
+                }
+            }
+        }
+
+        private void RenderMisc()
+        {
+            Color[] cols;
+            if (viewQuantumSockets)
+            {
+                cols = new Color[rocks.Length];
+                for (int i = 0; i < rocks.Length; i++)
+                {
+                    cols[i] = Color.HSVToRGB((float)i / rocks.Length, 1f, 0.2f);
+                }
+                int colIndex = 0;
+
+                foreach (SocketedQuantumObject rock in rocks)
+                {
+                    //QuantumSocket[] sockets = rock._socketList.ToArray();
+                    Transform transform = rock.transform;
+                    DrawWireframeSphere(4, transform.position, transform.forward, transform.up, cols[colIndex++], 12);
+                }
+
+                cols = new Color[sockets.Length];
+                for (int i = 0; i < sockets.Length; i++)
+                {
+                    cols[i] = Color.HSVToRGB((float)i / sockets.Length, 1f, 1f);
+                }
+                colIndex = 0;
+
+                foreach (QuantumSocket socket in sockets)
+                {
+                    Transform transform = socket.transform;
+                    DrawWireframeSphere(4, transform.position, transform.forward, transform.up, cols[colIndex++], 12);
                 }
             }
         }

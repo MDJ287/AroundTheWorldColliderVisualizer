@@ -57,6 +57,14 @@
       "title": "Stranger sector triggers",
       "type": "toggle",
       "value": false
+    },
+    "Not triggers": {
+      "type": "separator"
+    },
+    "viewQuantumSockets": {
+      "title": "Ember Twin Cave Quantum Sockets",
+      "type": "toggle",
+      "value": false
     }
   }
 }
